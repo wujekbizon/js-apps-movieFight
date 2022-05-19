@@ -1,6 +1,7 @@
 const autoCompleteConfig = {
   renderOption(movie) {
     const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
+
     return `
             <img src = "${imgSrc}" />
             ${movie.Title} (${movie.Year})
@@ -44,10 +45,11 @@ let leftMovie;
 let rightMovie;
 const onMovieSelect = async (movie, summaryElement, side) => {
   try {
-    const config = { params: { apikey: 'e0090ac2', i: movie.imdbID } };
+    const config = {
+      params: { apikey: 'e0090ac2', i: movie.imdbID },
+    };
     const response = await axios.get('https://www.omdbapi.com/', config);
     summaryElement.innerHTML = movieTemplate(response.data);
-
     if (side === 'left') {
       leftMovie = response.data;
     } else {
@@ -73,8 +75,8 @@ const runComparison = () => {
   leftSideStats.forEach((leftStat, index) => {
     const rightStat = rightSideStats[index];
 
-    const leftSideValue = parseInt(leftStat.dataset.value);
-    const rightSideValue = parseInt(rightStat.dataset.value);
+    const leftSideValue = parseFloat(leftStat.dataset.value);
+    const rightSideValue = parseFloat(rightStat.dataset.value);
 
     if (rightSideValue > leftSideValue) {
       leftStat.classList.remove('is-primary');
@@ -91,7 +93,7 @@ const movieTemplate = (movieDetail) => {
     movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, '')
   );
   const metascore = parseInt(movieDetail.Metascore);
-  const imdbRating = parseFloat(movieDetail.imdbRating);
+  const imdbRating = parseFloat(movieDetail.imdbRating).toFixed(1);
   const imdbVotes = parseInt(movieDetail.imdbVotes.replace(/,/g, ''));
   const awards = movieDetail.Awards.split(' ').reduce((prev, word) => {
     const value = parseInt(word);
